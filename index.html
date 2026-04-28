@@ -491,31 +491,39 @@
 
   /* ── print / PDF ─────────────────────────────────────── */
   @media print {
-    @page { size: A3 landscape; margin: 12mm; }
+    @page { margin: 10mm; }
     html, body { background: #fff !important; }
     .frame { padding: 0; max-width: none; }
-    header.bar { border-bottom: 1px solid var(--line); margin-bottom: 14px; padding-bottom: 10px; }
+    header.bar { border-bottom: 1px solid var(--line); margin-bottom: 12px; padding-bottom: 10px; }
     .actions, .save-pill, .crest .sub, footer.foot { display: none !important; }
-    .grid { gap: 10px; }
-    .col { break-inside: avoid; border-color: var(--line) !important; }
+    .crest .row1 { font-size: 18px; }
+    /* override responsive breakpoints — keep 3 columns regardless of paper size */
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 8px;
+    }
+    .col-3 { grid-column: auto !important; }
+    .col { border-color: var(--line) !important; }
     .col header { padding: 8px 12px; }
-    .body { padding: 8px 12px 12px; }
-    .adder, .empty, .card-handle, .card-delete { display: none !important; }
+    .col header h2 { font-size: 13px; }
+    .h2-letter { font-size: 9.5px; padding: 2px 5px; }
+    .body { padding: 8px 10px 10px; gap: 6px; }
+    .adder, .empty, .card-handle, .card-delete, .count { display: none !important; }
     .card {
       break-inside: avoid;
       page-break-inside: avoid;
       transform: none !important;
       box-shadow: none !important;
       cursor: default !important;
-      padding: 8px 12px;
+      padding: 6px 10px;
     }
-    .card-text { padding: 0; }
+    .card-text { padding: 0; font-size: 11.5px; line-height: 1.45; }
     .card-text::before {
       content: "";
       display: inline-block;
-      width: 8px; height: 8px;
+      width: 6px; height: 6px;
       border-radius: 50%;
-      margin-right: 8px;
+      margin-right: 6px;
       vertical-align: 1px;
     }
     .col[data-key="know"]    .card-text::before { background: var(--know); }
