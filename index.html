@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V · CH · D // Vím · Chci se dozvědět · Dozvěděl jsem se</title>
+<meta name="description" content="Reflektivní pomůcka pro workshop: tři sloupce - Vím, Chci se dozvědět, Dozvěděl jsem se. Karty si přesouvej, jak se dozvídáš nové věci.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Cabin:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #faf9f5;
+    --bg-card: #fdfcf9;
+    --bg-code: #f4f3ee;
+    --ink: #141413;
+    --ink-2: #30302e;
+    --ink-soft: #71717a;
+    --ink-dim: #9d9d97;
+    --line: #e5e4df;
+    --line-strong: #d6d4cc;
+
+    --know: #044caf;
+    --know-soft: #e7eefb;
+    --want: #b8841a;
+    --want-soft: #fef3d4;
+    --learned: #0d8b35;
+    --learned-soft: #e1f4e6;
+
+    --accent: #ffd500;
+    --danger: #a91b14;
+    --danger-soft: #fbeeec;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    font-family: "Cabin", system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(circle at 0% 0%, var(--know-soft) 0%, transparent 35%),
+      radial-gradient(circle at 100% 0%, var(--learned-soft) 0%, transparent 35%),
+      radial-gradient(circle at 50% 100%, var(--want-soft) 0%, transparent 40%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+
+  .frame {
+    max-width: 1480px;
+    margin: 0 auto;
+    padding: 28px 32px 60px;
+  }
+
+  /* ── header ─────────────────────────────────────── */
+  header.bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .crest {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .crest .row1 {
+    font-size: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    color: var(--ink);
+  }
+  .crest .slash {
+    color: var(--ink-soft);
+    font-weight: 400;
+  }
+  .crest .sub {
+    margin-top: 4px;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+  .crest .sub kbd {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin: 0 1px;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .save-pill {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.25s ease;
+  }
+  .save-pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--learned);
+    box-shadow: 0 0 0 0 var(--learned);
+  }
+  .save-pill.flash::before {
+    animation: pulse 0.6s ease;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(13, 139, 53, 0.5); }
+    100% { box-shadow: 0 0 0 8px rgba(13, 139, 53, 0); }
+  }
+
+  .btn {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--ink);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:hover {
+    border-color: var(--ink-soft);
+    background: var(--bg-soft);
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+  .btn-primary:hover {
+    opacity: 0.85;
+    background: var(--ink);
+  }
+  .btn-ghost:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: var(--danger-soft);
+  }
+
+  /* ── columns ─────────────────────────────────────── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: start;
+  }
+  @media (max-width: 1100px) { .grid { grid-template-columns: 1fr 1fr; } .col-3 { grid-column: 1 / -1; } }
+  @media (max-width: 760px)  { .grid { grid-template-columns: 1fr; } .col-3 { grid-column: auto; } }
+
+  .col {
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .col header {
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .col header::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0;
+    width: 3px; height: 100%;
+  }
+  .col[data-key="know"]    header::before { background: var(--know); }
+  .col[data-key="want"]    header::before { background: var(--want); }
+  .col[data-key="learned"] header::before { background: var(--learned); }
+
+  .col header h2 {
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 15.5px;
+    line-height: 1.2;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .col[data-key="know"]    header h2 { color: var(--know); }
+  .col[data-key="want"]    header h2 { color: var(--want); }
+  .col[data-key="learned"] header h2 { color: var(--learned); }
+
+  .h2-letter {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--bg);
+    line-height: 1;
+  }
+  .col[data-key="know"]    .h2-letter { background: var(--know); }
+  .col[data-key="want"]    .h2-letter { background: var(--want); }
+  .col[data-key="learned"] .h2-letter { background: var(--learned); }
+
+  .count {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    padding: 2px 8px;
+    border-radius: 999px;
+    line-height: 1.4;
+  }
+
+  .body {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ── adder form ─────────────────────────────────────── */
+  .adder {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+  .adder input {
+    font-family: "Cabin", inherit;
+    font-size: 13px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--bg);
+    color: var(--ink);
+    width: 100%;
+    transition: all 0.15s ease;
+  }
+  .adder input::placeholder { color: var(--ink-dim); }
+  .adder input:focus {
+    outline: none;
+    background: var(--bg);
+  }
+  .col[data-key="know"]    .adder input:focus { border-color: var(--know);    box-shadow: 0 0 0 3px var(--know-soft); }
+  .col[data-key="want"]    .adder input:focus { border-color: var(--want);    box-shadow: 0 0 0 3px var(--want-soft); }
+  .col[data-key="learned"] .adder input:focus { border-color: var(--learned); box-shadow: 0 0 0 3px var(--learned-soft); }
+
+  .adder button {
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    width: 36px;
+    height: auto;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--bg);
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 0;
+    transition: transform 0.1s ease, opacity 0.15s ease;
+    line-height: 1;
+  }
+  .adder button:hover { opacity: 0.85; }
+  .adder button:active { transform: scale(0.96); }
+  .col[data-key="know"]    .adder button { background: var(--know);    border-color: var(--know); }
+  .col[data-key="want"]    .adder button { background: var(--want);    border-color: var(--want); }
+  .col[data-key="learned"] .adder button { background: var(--learned); border-color: var(--learned); }
+
+  /* ── cards container ─────────────────────────────────────── */
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 40px;
+    transition: background-color 0.15s ease;
+  }
+  .col.drag-over .cards {
+    background:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0,
+        transparent 6px,
+        var(--bg-soft) 6px,
+        var(--bg-soft) 12px
+      );
+    border-radius: 6px;
+    padding: 6px;
+    margin: -6px;
+  }
+
+  /* ── card ─────────────────────────────────────── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 10px 12px 12px;
+    cursor: grab;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .card:hover {
+    border-color: var(--ink-soft);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(20, 20, 19, 0.05);
+  }
+  .card.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+  }
+  .card:active { cursor: grabbing; }
+  .card.just-moved {
+    animation: settle 0.45s ease;
+  }
+  @keyframes settle {
+    0%   { background: var(--bg-soft); }
+    100% { background: var(--bg-card); }
+  }
+
+  .card-handle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .card-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .card-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid var(--ink-dim);
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .card-dot:hover {
+    transform: scale(1.18);
+  }
+  .card-dot[data-col="know"].active    { background: var(--know);    border-color: var(--know); }
+  .card-dot[data-col="want"].active    { background: var(--want);    border-color: var(--want); }
+  .card-dot[data-col="learned"].active { background: var(--learned); border-color: var(--learned); }
+
+  .card-dot[data-col="know"]:hover:not(.active)    { border-color: var(--know);    background: var(--know-soft); }
+  .card-dot[data-col="want"]:hover:not(.active)    { border-color: var(--want);    background: var(--want-soft); }
+  .card-dot[data-col="learned"]:hover:not(.active) { border-color: var(--learned); background: var(--learned-soft); }
+
+  .card-delete {
+    background: transparent;
+    border: none;
+    color: var(--ink-dim);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: all 0.15s ease;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 400;
+  }
+  .card:hover .card-delete,
+  .card-delete:focus {
+    opacity: 0.7;
+  }
+  .card-delete:hover {
+    opacity: 1 !important;
+    color: var(--danger);
+  }
+
+  .card-text {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    cursor: text;
+    padding: 2px 0;
+    user-select: text;
+    outline: none;
+  }
+  .card-text[contenteditable="true"] {
+    background: var(--bg-soft);
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin: -2px -2px 0;
+    cursor: text;
+  }
+  .col[data-key="know"]    .card-text[contenteditable="true"] { box-shadow: inset 0 0 0 1.5px var(--know); }
+  .col[data-key="want"]    .card-text[contenteditable="true"] { box-shadow: inset 0 0 0 1.5px var(--want); }
+  .col[data-key="learned"] .card-text[contenteditable="true"] { box-shadow: inset 0 0 0 1.5px var(--learned); }
+
+  /* ── empty state ─────────────────────────────────────── */
+  .empty {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-style: italic;
+    padding: 22px 14px;
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    background: var(--bg-soft);
+    line-height: 1.5;
+  }
+  .empty strong {
+    display: block;
+    color: var(--ink-2);
+    font-style: normal;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    margin-bottom: 4px;
+  }
+
+  /* ── footer ─────────────────────────────────────── */
+  footer.foot {
+    margin-top: 28px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  footer.foot kbd {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin: 0 1px;
+  }
+
+  /* ── print / PDF ─────────────────────────────────────── */
+  @media print {
+    @page { size: A3 landscape; margin: 12mm; }
+    html, body { background: #fff !important; }
+    .frame { padding: 0; max-width: none; }
+    header.bar { border-bottom: 1px solid var(--line); margin-bottom: 14px; padding-bottom: 10px; }
+    .actions, .save-pill, .crest .sub, footer.foot { display: none !important; }
+    .grid { gap: 10px; }
+    .col { break-inside: avoid; border-color: var(--line) !important; }
+    .col header { padding: 8px 12px; }
+    .body { padding: 8px 12px 12px; }
+    .adder, .empty, .card-handle, .card-delete { display: none !important; }
+    .card {
+      break-inside: avoid;
+      page-break-inside: avoid;
+      transform: none !important;
+      box-shadow: none !important;
+      cursor: default !important;
+      padding: 8px 12px;
+    }
+    .card-text { padding: 0; }
+    .card-text::before {
+      content: "";
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: 1px;
+    }
+    .col[data-key="know"]    .card-text::before { background: var(--know); }
+    .col[data-key="want"]    .card-text::before { background: var(--want); }
+    .col[data-key="learned"] .card-text::before { background: var(--learned); }
+  }
+
+  /* ── responsive tweaks ─────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .frame { padding: 16px 14px 40px; }
+    header.bar { gap: 12px; }
+    .crest .row1 { font-size: 18px; }
+    .actions { width: 100%; justify-content: space-between; }
+    .btn { padding: 7px 10px; font-size: 11.5px; }
+    .save-pill { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+<header class="bar">
+  <div class="crest">
+    <div class="row1">
+      <span style="color: var(--know)">Vím</span>
+      <span class="slash">//</span>
+      <span style="color: var(--want)">Chci se dozvědět</span>
+      <span class="slash">//</span>
+      <span style="color: var(--learned)">Dozvěděl jsem se</span>
+    </div>
+    <div class="sub">
+      Reflektivní pomůcka pro workshop · Karty si přesouvej
+      <kbd>táhni</kbd> nebo klikni na barevné tečky · vše se ukládá lokálně
+    </div>
+  </div>
+  <div class="actions">
+    <span class="save-pill" id="save-pill">Uloženo</span>
+    <button class="btn btn-ghost" id="reset-btn" type="button">Reset</button>
+    <button class="btn btn-primary" id="pdf-btn" type="button">Uložit PDF</button>
+  </div>
+</header>
+
+<main class="grid">
+
+  <section class="col" data-key="know">
+    <header>
+      <h2><span class="h2-letter">V</span> Vím</h2>
+      <span class="count" data-count-for="know">0</span>
+    </header>
+    <div class="body">
+      <form class="adder" data-add-for="know" autocomplete="off">
+        <input type="text" placeholder="Co o tématu už vím..." aria-label="Přidat kartu do Vím">
+        <button type="submit" aria-label="Přidat kartu">+</button>
+      </form>
+      <div class="cards" data-cards-for="know"></div>
+      <div class="empty" data-empty-for="know">
+        <strong>Začni tady</strong>
+        Zapiš si, co o tématu už víš nebo si myslíš, že víš.
+      </div>
+    </div>
+  </section>
+
+  <section class="col" data-key="want">
+    <header>
+      <h2><span class="h2-letter">CH</span> Chci se dozvědět</h2>
+      <span class="count" data-count-for="want">0</span>
+    </header>
+    <div class="body">
+      <form class="adder" data-add-for="want" autocomplete="off">
+        <input type="text" placeholder="Co se chci dozvědět..." aria-label="Přidat kartu do Chci se dozvědět">
+        <button type="submit" aria-label="Přidat kartu">+</button>
+      </form>
+      <div class="cards" data-cards-for="want"></div>
+      <div class="empty" data-empty-for="want">
+        <strong>Otázky a očekávání</strong>
+        Co tě zajímá? Čemu chceš porozumět? Co si chceš ověřit?
+      </div>
+    </div>
+  </section>
+
+  <section class="col" data-key="learned">
+    <header>
+      <h2><span class="h2-letter">D</span> Dozvěděl jsem se</h2>
+      <span class="count" data-count-for="learned">0</span>
+    </header>
+    <div class="body">
+      <form class="adder" data-add-for="learned" autocomplete="off">
+        <input type="text" placeholder="Co jsem se dozvěděl..." aria-label="Přidat kartu do Dozvěděl jsem se">
+        <button type="submit" aria-label="Přidat kartu">+</button>
+      </form>
+      <div class="cards" data-cards-for="learned"></div>
+      <div class="empty" data-empty-for="learned">
+        <strong>Tady končí cesta</strong>
+        Sem přesouvej karty z předchozích sloupců, jakmile se to dozvíš.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div>Ulož průběžně PDF, ať máš výsledek po sobě <kbd>Cmd</kbd>+<kbd>P</kbd> jako záloha</div>
+  <div>Data drží jen tvůj prohlížeč · Reset vymaže vše</div>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const STORAGE_KEY = "vchd-data-v1";
+  const COLS = ["know", "want", "learned"];
+  const COL_LABELS = {
+    know: "Vím",
+    want: "Chci se dozvědět",
+    learned: "Dozvěděl jsem se"
+  };
+
+  let state = loadState();
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return blankState();
+      const parsed = JSON.parse(raw);
+      const next = blankState();
+      for (const k of COLS) {
+        if (Array.isArray(parsed[k])) {
+          next[k] = parsed[k]
+            .filter(item => item && typeof item.text === "string")
+            .map(item => ({
+              id: typeof item.id === "string" ? item.id : uid(),
+              text: item.text
+            }));
+        }
+      }
+      return next;
+    } catch (err) {
+      console.warn("VCHD: failed to load state", err);
+      return blankState();
+    }
+  }
+
+  function blankState() {
+    return { know: [], want: [], learned: [] };
+  }
+
+  function uid() {
+    return "c" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      flashSaved();
+    } catch (err) {
+      console.warn("VCHD: failed to save", err);
+    }
+  }
+
+  let flashTimer = null;
+  function flashSaved() {
+    const pill = document.getElementById("save-pill");
+    if (!pill) return;
+    pill.classList.remove("flash");
+    void pill.offsetWidth;
+    pill.classList.add("flash");
+    pill.textContent = "Uloženo";
+    clearTimeout(flashTimer);
+    flashTimer = setTimeout(() => pill.classList.remove("flash"), 700);
+  }
+
+  function render(highlightId) {
+    for (const col of COLS) {
+      const list = state[col];
+      const container = document.querySelector(`[data-cards-for="${col}"]`);
+      const empty = document.querySelector(`[data-empty-for="${col}"]`);
+      const count = document.querySelector(`[data-count-for="${col}"]`);
+
+      const cardEls = list.map(item => buildCard(col, item, item.id === highlightId));
+      container.replaceChildren(...cardEls);
+
+      count.textContent = String(list.length);
+      empty.style.display = list.length ? "none" : "block";
+    }
+  }
+
+  function buildCard(col, item, highlight) {
+    const card = document.createElement("article");
+    card.className = "card" + (highlight ? " just-moved" : "");
+    card.draggable = true;
+    card.dataset.id = item.id;
+    card.dataset.col = col;
+
+    const handle = document.createElement("div");
+    handle.className = "card-handle";
+
+    const dots = document.createElement("div");
+    dots.className = "card-dots";
+    dots.setAttribute("role", "group");
+    dots.setAttribute("aria-label", "Přesunout do jiného sloupce");
+
+    for (const target of COLS) {
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "card-dot" + (target === col ? " active" : "");
+      dot.dataset.col = target;
+      dot.setAttribute("aria-label", "Přesunout do: " + COL_LABELS[target]);
+      dot.title = COL_LABELS[target];
+      dot.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (target === col) return;
+        moveCard(item.id, col, target);
+      });
+      dots.appendChild(dot);
+    }
+
+    const del = document.createElement("button");
+    del.type = "button";
+    del.className = "card-delete";
+    del.setAttribute("aria-label", "Smazat kartu");
+    del.title = "Smazat";
+    del.textContent = "×";
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteCard(col, item.id);
+    });
+
+    handle.appendChild(dots);
+    handle.appendChild(del);
+
+    const text = document.createElement("div");
+    text.className = "card-text";
+    text.tabIndex = 0;
+    text.textContent = item.text;
+    text.title = "Dvojklik upraví text";
+
+    text.addEventListener("dblclick", (e) => {
+      e.stopPropagation();
+      enterEditMode(text, col, item.id);
+    });
+
+    card.appendChild(handle);
+    card.appendChild(text);
+    return card;
+  }
+
+  function enterEditMode(textEl, col, id) {
+    if (textEl.isContentEditable) return;
+    const card = textEl.closest(".card");
+    if (card) card.draggable = false;
+    textEl.contentEditable = "true";
+    textEl.focus();
+
+    const range = document.createRange();
+    range.selectNodeContents(textEl);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    const original = textEl.textContent;
+    let cancelled = false;
+
+    const cleanup = () => {
+      textEl.removeEventListener("blur", onBlur);
+      textEl.removeEventListener("keydown", onKey);
+      textEl.contentEditable = "false";
+      if (card) card.draggable = true;
+
+      if (cancelled) {
+        textEl.textContent = original;
+        return;
+      }
+
+      const newText = textEl.textContent.trim();
+      const item = state[col].find(c => c.id === id);
+      if (!item) return;
+
+      if (!newText) {
+        deleteCard(col, id);
+        return;
+      }
+      if (newText !== item.text) {
+        item.text = newText;
+        save();
+      }
+      textEl.textContent = newText;
+    };
+
+    const onBlur = () => cleanup();
+    const onKey = (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        textEl.blur();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        cancelled = true;
+        textEl.blur();
+      }
+    };
+
+    textEl.addEventListener("blur", onBlur);
+    textEl.addEventListener("keydown", onKey);
+  }
+
+  function addCard(col, text) {
+    text = (text || "").trim();
+    if (!text) return;
+    const card = { id: uid(), text };
+    state[col].push(card);
+    save();
+    render(card.id);
+  }
+
+  function deleteCard(col, id) {
+    state[col] = state[col].filter(c => c.id !== id);
+    save();
+    render();
+  }
+
+  function moveCard(id, fromCol, toCol, beforeId) {
+    if (fromCol === toCol && !beforeId) return;
+    const idx = state[fromCol].findIndex(c => c.id === id);
+    if (idx === -1) return;
+    const [card] = state[fromCol].splice(idx, 1);
+
+    if (beforeId && beforeId !== id) {
+      const beforeIdx = state[toCol].findIndex(c => c.id === beforeId);
+      if (beforeIdx >= 0) {
+        state[toCol].splice(beforeIdx, 0, card);
+      } else {
+        state[toCol].push(card);
+      }
+    } else {
+      state[toCol].push(card);
+    }
+    save();
+    render(id);
+  }
+
+  document.querySelectorAll(".adder").forEach(form => {
+    const col = form.dataset.addFor;
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = form.querySelector("input");
+      addCard(col, input.value);
+      input.value = "";
+      input.focus();
+    });
+  });
+
+  document.querySelectorAll(".col").forEach(col => {
+    const colKey = col.dataset.key;
+
+    col.addEventListener("dragover", (e) => {
+      if (!isCardDrag(e)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      col.classList.add("drag-over");
+    });
+
+    col.addEventListener("dragleave", (e) => {
+      if (col.contains(e.relatedTarget)) return;
+      col.classList.remove("drag-over");
+    });
+
+    col.addEventListener("drop", (e) => {
+      if (!isCardDrag(e)) return;
+      e.preventDefault();
+      col.classList.remove("drag-over");
+      let payload;
+      try {
+        payload = JSON.parse(e.dataTransfer.getData("application/x-vchd-card"));
+      } catch (err) {
+        return;
+      }
+      if (!payload || !payload.id || !payload.fromCol) return;
+      const dropzone = col.querySelector(".cards");
+      const after = getDragAfter(dropzone, e.clientY);
+      const beforeId = after ? after.dataset.id : null;
+      moveCard(payload.id, payload.fromCol, colKey, beforeId);
+    });
+  });
+
+  document.addEventListener("dragstart", (e) => {
+    const card = e.target.closest(".card");
+    if (!card || !card.draggable) return;
+    card.classList.add("dragging");
+    const payload = { id: card.dataset.id, fromCol: card.dataset.col };
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("application/x-vchd-card", JSON.stringify(payload));
+    const txt = card.querySelector(".card-text");
+    e.dataTransfer.setData("text/plain", txt ? txt.textContent : "");
+  });
+
+  document.addEventListener("dragend", (e) => {
+    const card = e.target.closest(".card");
+    if (card) card.classList.remove("dragging");
+    document.querySelectorAll(".col.drag-over").forEach(c => c.classList.remove("drag-over"));
+  });
+
+  function isCardDrag(e) {
+    if (!e.dataTransfer) return false;
+    return Array.from(e.dataTransfer.types).includes("application/x-vchd-card");
+  }
+
+  function getDragAfter(container, y) {
+    const cards = Array.from(container.querySelectorAll(".card:not(.dragging)"));
+    return cards.reduce((closest, child) => {
+      const box = child.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if (offset < 0 && offset > closest.offset) {
+        return { offset, element: child };
+      }
+      return closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element || null;
+  }
+
+  document.getElementById("reset-btn").addEventListener("click", () => {
+    const total = COLS.reduce((acc, k) => acc + state[k].length, 0);
+    if (total === 0) return;
+    const ok = confirm(`Opravdu chceš smazat všech ${total} ${cardWord(total)}?\n\nAkce nelze vrátit zpět.`);
+    if (!ok) return;
+    state = blankState();
+    save();
+    render();
+  });
+
+  function cardWord(n) {
+    if (n === 1) return "kartu";
+    if (n >= 2 && n <= 4) return "karty";
+    return "karet";
+  }
+
+  document.getElementById("pdf-btn").addEventListener("click", () => {
+    window.print();
+  });
+
+  render();
+  document.getElementById("save-pill").classList.remove("flash");
+})();
+</script>
+</body>
+</html>
